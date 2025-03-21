@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h3>Фильтр по категориям</h3>
+    <ul class="list-group">
+        {% for category in categories %}
+        <li class="list-group-item">
+            <a href="?category={{ category.id }}">{{ category.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<h1>Доска объявлений</h1>
+<div class="list-group">
+    {% for post in page_obj %}
+    <div class="list-group-item">
+        <h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
+        <p>{{ post.content|truncatechars:200|safe }}</p>
+        <small>Категория: {{ post.category.name }}</small>
+        <small class="text-muted">Дата: {{ post.created_at|date:"d.m.Y H:i" }}</small>
+    </div>
+    {% endfor %}
+</div>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination mt-4">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Назад</a>
+        </li>
+        {% endif %}
+
+        <li class="page-item disabled">
+            <span class="page-link">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперед</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p>{{ post.content|safe }}</p>
+<small>Категория: {{ post.category.name }}</small>
+<small class="text-muted">Дата: {{ post.created_at|date:"d.m.Y H:i" }}</small>
+
+{% if user == post.author %}
+<div class="mt-3">
+    <a href="{% url 'post_edit' post.pk %}" class="btn btn-warning">Редактировать</a>
+</div>
+{% endif %}
+
+<h2 class="mt-4">Отклики</h2>
+{% for response in responses %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <p class="card-text">{{ response.text }}</p>
+            <p class="card-text"><small class="text-muted">Автор: {{ response.author.username }}</small></p>
+            {% if response.accepted %}
+                <p class="text-success">Принят</p>
+            {% else %}
+                <a href="{% url 'response_accept' response.pk %}" class="btn btn-success btn-sm">Принять</a>
+                <a href="{% url 'response_delete' response.pk %}" class="btn btn-danger btn-sm">Удалить</a>
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+
+{% if user.is_authenticated %}
+<form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="form-group">
+        {{ form.text.label_tag }}
+        {{ form.text }}
+    </div>
+    <button type="submit" class="btn btn-primary">Отправить отклик</button>
+</form>
+{% endif %}
+{% endblock %}
